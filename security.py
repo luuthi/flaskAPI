@@ -4,9 +4,10 @@ from werkzeug.security import safe_str_cmp
 def authenticate(username,password):
     user = UserModel.get_by_username(username)
     if user and safe_str_cmp(user.password, password):
-        print (user.json())
-        return user
+        return user.json()
+    else:
+        return False
 
 def identity(payload):
     user_id = payload['identity']
-    return UserModel.get_by_id(user_id)
+    return UserModel.get_by_id(user_id).json()
