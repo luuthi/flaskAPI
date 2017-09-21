@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 #sqlite:///data.db
 #postgres://zyqfvsqtqnnjlt:37e8daf153bb33265bfdcbf8a7
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgres://zyqfvsqtqnnjlt:37e8daf153bb33265bfdcbf8a7')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CORS_ENABLED'] = True
 app.secret_key = 'thild'
