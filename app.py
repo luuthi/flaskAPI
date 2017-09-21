@@ -13,8 +13,12 @@ app.config['DEBUG'] = True
 #postgres://zyqfvsqtqnnjlt:37e8daf153bb33265bfdcbf8a7
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgres://zyqfvsqtqnnjlt:37e8daf153bb33265bfdcbf8a7')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['CORS_ENABLED'] = True
 app.secret_key = 'thild'
 api = Api(app)
+CORS(app, origins="http://localhost:4200", allow_headers=[
+    "Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
+    supports_credentials=True)
 CORS(app)
 
 
