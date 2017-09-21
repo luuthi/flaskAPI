@@ -13,10 +13,9 @@ app.config['DEBUG'] = True
 #postgres://qpdggmnrmhrsim:7452f8111d18456b355d432280661f87eacc3c5236c8ca1f55be3b861bb55127@ec2-54-225-237-64.compute-1.amazonaws.com:5432/d4i7ve72ue4i15
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgres://qpdggmnrmhrsim:7452f8111d18456b355d432280661f87eacc3c5236c8ca1f55be3b861bb55127@ec2-54-225-237-64.compute-1.amazonaws.com:5432/d4i7ve72ue4i15')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['CORS_ENABLED'] = True
 app.secret_key = 'thild'
 api = Api(app)
-CORS(app)
+
 
 
 jwt = JWT(app, authenticate, identity) #/auth
