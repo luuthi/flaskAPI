@@ -10,4 +10,4 @@ def authenticate(username,password):
 
 def identity(payload):
     user_id = payload['identity']
-    return {"users": UserModel.get_by_id(user_id)}
+    return  UserModel.get_by_id(user_id)
