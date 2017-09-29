@@ -1,5 +1,4 @@
-from flask_restful import Resource, Api, reqparse
-from flask_jwt import JWT,jwt_required
+from flask_restful import Resource, reqparse
 from models.user import UserModel
 
 
@@ -16,8 +15,8 @@ class UserRegister(Resource):
         help="This field cannot be blank."
     )
     parser.add_argument('fullname',
-        type= str,
-        required = True,
+        type= unicode,
+        required = False,
         help = "This field cannot be blank"
     )
     parser.add_argument('email',
@@ -45,38 +44,12 @@ class UserRegister(Resource):
         data = UserRegister.parser.parse_args()
         print(data)
         if UserModel.get_by_username(data['username']):
-            return {'msg': 'A user with this username already exist'}, 400
+            return {'msg': 'A user with this username already exist', 'status:': '0'}
         if UserModel.get_by_email(data['email']):
-            return {'msg': 'A user with this email already exist'}, 400
+            return {'msg': 'A user with this email already exist', 'status': '0'}
 
         user = UserModel(**data)
         user.save_to_db()
-        return {'msg': 'User created successfully'}, 201
+        return {'msg': 'User created successfully', 'status': '1'}, 201
 
-#     @jwt_required()
-#     def put(self, _id):
-#         data = UserRegister.parser.parse_args()
-#         update_user = UserModel.get_by_id(_id)
-#         if update_user:
-#             update_user.full_name = data['full_name']
-#             update_user.image = data['image']
 #
-#             update_user.save_to_db()
-#             return {'msg': 'User updated successfully'}
-#         else:
-#             return {'msg': 'User with name {} not exists'.format(data['username'])}, 404
-#
-#     @jwt_required()
-#     def delete(self,_id):
-#         delete_user = UserModel.get_by_id(_id)
-#         if delete_user:
-#             delete_user.delete_from_db()
-#         else:
-#             return {'msg': 'User not found'}, 404
-#         return {'msg': 'User deleted'}
-#
-#
-# class UserList(Resource):
-#     @jwt_required()
-#     def get(self):
-#         return {'users': [user.json() for user in UserModel.query.all().order_by(UserModel.user_id)]}, 200
