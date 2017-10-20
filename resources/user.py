@@ -16,7 +16,7 @@ class User(Resource):
         help="This field cannot be blank."
     )
     parser.add_argument('fullname',
-        type= str,
+        type= unicode,
         required = True,
         help = "This field cannot be blank"
     )

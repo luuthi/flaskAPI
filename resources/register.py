@@ -49,6 +49,7 @@ class UserRegister(Resource):
             return {'msg': 'A user with this email already exist', 'status': '0'}
 
         user = UserModel(**data)
+        print (user)
         user.save_to_db()
         return {'msg': 'User created successfully', 'status': '1'}, 201
 
