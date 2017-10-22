@@ -10,6 +10,12 @@ from resources.register import UserRegister
 from resources.user import User
 from resources.folder import Folder, FolderList, FolderByName, FolderByUsername
 from resources.survey import Survey, SurveyByFolder, SurveyList, SurveyByUser, SurveyByName,SurveyMaxByUser
+from resources.page import Page, PageBySurvey, PageList
+from resources.questiontype import QuestionType, QuestionTypeList
+from resources.question import Question, QuestionByPage, QuestionList
+from resources.answerpaper import AnswerPaper, AnswerPaperBySurvey,AnswerPaperList
+from resources.choice import Choice, ChoiceByQuestion, ChoiceList
+from resources.answer import Answer, AnswerByPaper, AnswerByQuestion, AnswerList
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -42,6 +48,37 @@ api.add_resource(SurveyByFolder, '/api/v1/surveys_folder', endpoint='survey_by_f
 api.add_resource(SurveyByUser, '/api/v1/surveys_user', endpoint='survey_by_user')
 api.add_resource(SurveyMaxByUser, '/api/v1/surveys_max', endpoint='survey_by_max')
 api.add_resource(SurveyByName, '/api/v1/surveys_name', endpoint='survey_by_name')
+
+#question type
+api.add_resource(QuestionType, '/api/v1/questiontype/<_id>', endpoint='questiontype')
+api.add_resource(QuestionTypeList, '/api/v1/questiontypes', endpoint='questiontypes')
+
+#page
+api.add_resource(Page, '/api/v1/page/<_id>', endpoint='page')
+api.add_resource(PageList, '/api/v1/pages', endpoint='pages')
+api.add_resource(PageBySurvey, '/api/v1/page_survey', endpoint='page_survey')
+
+#question
+api.add_resource(Question, '/api/v1/question/<_id>', endpoint='question')
+api.add_resource(QuestionList, '/api/v1/questions', endpoint='questions')
+api.add_resource(QuestionByPage, '/api/v1/question_page', endpoint='question_page')
+
+#answer paper
+api.add_resource(AnswerPaper, '/api/v1/answerpaper/<_id>', endpoint='answerpaper')
+api.add_resource(AnswerPaperList, '/api/v1/answerpapers', endpoint='answerapers')
+api.add_resource(AnswerPaperBySurvey, '/api/v1/answerpaper_survey', endpoint='answerpaper_survey')
+
+#choice
+api.add_resource(Choice, '/api/v1/choice/<_id>', endpoint='choice')
+api.add_resource(ChoiceList, '/api/v1/choices', endpoint='choices')
+api.add_resource(ChoiceByQuestion, '/api/v1/choice_question', endpoint='choice_question')
+
+#answer
+api.add_resource(Answer, '/api/v1/answer/<_id>', endpoint='answer')
+api.add_resource(AnswerList, '/api/v1/answers', endpoint='answers')
+api.add_resource(AnswerByQuestion, '/api/v1/answer_question', endpoint='answer_question')
+api.add_resource(AnswerByPaper, '/api/v1/answer_paper', endpoint='answer_paper')
+
 if __name__ == '__main__':
     from db import db
     db.init_app(app)

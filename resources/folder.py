@@ -96,23 +96,14 @@ class FolderByUsername(Resource):
         if lstfolder:
             return {'Data': [folder.json() for folder in lstfolder], 'TotalRows': len(lstfolder), 'Status': 1}
         return {'msg': 'Không tìm thấy thư mục', 'Status': 0}
-# class FolderByUsername(Resource):
-#
-#     @jwt_required()
-#     def get(self, user_name):
-#
-#         lstfolder = FolderModel.get_by_user(user_name)
-#         if lstfolder:
-#             return {'Data': [folder.json() for folder in lstfolder], 'TotalRows': len(lstfolder), 'Status': 1}
-#         return {'msg': 'Không tìm thấy thư mục', 'Status': 0}
 
 class FolderByName(Resource):
 
     @jwt_required()
     def get(self):
-        parser_user = reqparse.RequestParser()
-        parser_user.add_argument('folder_name', type=str, location='args', required=False)
-        args = parser_user.parse_args(strict=False)
+        parser = reqparse.RequestParser()
+        parser.add_argument('folder_name', type=str, location='args', required=False)
+        args = parser.parse_args(strict=False)
         name = args.get('folder_name')
         print (name)
         folder = FolderModel.get_by_name(name)
