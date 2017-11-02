@@ -83,14 +83,13 @@ class SurveyList(Resource):
     def post(self):
         data = Survey.parser.parse_args()
         survey = SurveyModel(**data)
-        print(data)
-        print(survey.survey_code)
+        newid = 0
         try:
-            survey.save_to_db()
+            newid = survey.save_to_db()
         except:
             return {'msg': 'Đã có lỗi xảy ra', 'Status': 0}
 
-        return {'msg': 'Thêm mới Survey thành công', 'Status': 1}
+        return {'msg': 'Thêm mới Survey thành công', 'Status': 1, 'insertedId': newid}
 
 
 class SurveyByFolder(Resource):

@@ -3,6 +3,7 @@ from flask_restful import Resource, Api, reqparse
 from flask_jwt import jwt_required
 from models.question import QuestionModel
 from datetime import datetime
+from models.choice import ChoiceModel
 
 class Question(Resource):
     parser = reqparse.RequestParser()
@@ -63,6 +64,7 @@ class QuestionList(Resource):
         return {'msg': 'Thêm mới câu hỏi thành công thành công', 'Status': 1}
 
 class QuestionByPage(Resource):
+
     @jwt_required()
     def get(self):
         parser = reqparse.RequestParser()
@@ -70,6 +72,16 @@ class QuestionByPage(Resource):
         args = parser.parse_args(strict=False)
         page_id = args.get('page_id')
         lstQuestion = QuestionModel.get_by_page(page_id)
+        result = []
         if lstQuestion:
-            return {'Data': [question.json() for question in lstQuestion],'TotalRows': len(lstQuestion), 'Status':1}
+            for question in lstQuestion:
+                lstChoice = ChoiceModel.get_by_question(question.question_id)
+                result.append({'question_id': question.question_id, 'questiontype_id': question.questiontype_id,
+                'page_id': question.page_id, 'content': question.content, 'question_orderd': question.question_ordred,
+                'question_img': question.question_img, 'isrequired': question.is_required,
+                'status': question.question_status, 'last_edited': question.last_edited.isoformat(), 'questiontype_code': question.questiontype_code,
+                'questiontype_name': question.questiontype_name, 'choices' : [choice.json() for choice in lstChoice]})
+            return {'Data': result, 'TotalRows': len(lstQuestion), 'Status': 1}
         return {'msg': 'Không tìm thấy câu hỏi', 'Status': 0}
+
+

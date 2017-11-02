@@ -1,5 +1,7 @@
 from db import db
 from sqlalchemy import func
+from models.question_type import QuestionTypeModel
+from datetime import datetime
 
 
 class QuestionModel(db.Model):
@@ -15,6 +17,7 @@ class QuestionModel(db.Model):
     question_status = db.Column(db.Integer)
     last_edited = db.Column(db.Date)
 
+
     def __init__(self, questiontype_id, page_id, content, question_ordered, question_img,
                  is_required, question_status, last_edited):
         self.questiontype_id = questiontype_id
@@ -26,12 +29,6 @@ class QuestionModel(db.Model):
         self.question_status = question_status
         self.last_edited = last_edited
 
-
-    def date_handler(obj):
-        if hasattr(obj, 'isoformat'):
-            return obj.isoformat()
-        else:
-            raise TypeError
 
     def json(self):
         return {'question_id': self.question_id, 'questiontype_id': self.questiontype_id,
@@ -45,7 +42,20 @@ class QuestionModel(db.Model):
 
     @classmethod
     def get_by_page(cls, _page_id):
-        return cls.query.filter_by(page_id=_page_id).filter_by(question_status=True).order_by(QuestionModel.question_ordred).all()
+        return db.session.query(QuestionModel, QuestionTypeModel).\
+            join(QuestionTypeModel).add_columns(QuestionModel.question_id,
+                                               QuestionModel.questiontype_id,
+                                               QuestionModel.question_status,
+                                               QuestionModel.question_ordred,
+                                               QuestionModel.question_img,
+                                               QuestionModel.content,
+                                               QuestionModel.page_id,
+                                               QuestionModel.is_required,
+                                               QuestionModel.last_edited,
+                                               QuestionTypeModel.questiontype_code,
+                                               QuestionTypeModel.questiontype_name).filter\
+                (QuestionTypeModel.questiontype_id == QuestionModel.questiontype_id).filter(QuestionModel.page_id==_page_id).\
+                filter(QuestionModel.question_status==True).order_by(QuestionModel.question_ordred.asc()).all()
 
     def save_to_db(self):
         db.session.add(self)
