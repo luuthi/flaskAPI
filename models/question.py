@@ -32,9 +32,9 @@ class QuestionModel(db.Model):
 
     def json(self):
         return {'question_id': self.question_id, 'questiontype_id': self.questiontype_id,
-                'page_id': self.page_id, 'content': self.content, 'question_orderd': self.question_ordred,
-                'question_img': self.question_img, 'isrequired': self.is_required,
-                'status': self.question_status, 'last_edited': self.last_edited.isoformat()}
+                'page_id': self.page_id, 'content': self.content, 'question_ordered': self.question_ordred,
+                'question_img': self.question_img, 'is_required': self.is_required,
+                'question_status': self.question_status, 'last_edited': self.last_edited.isoformat()}
 
     @classmethod
     def get_by_id(cls, _id):
@@ -56,10 +56,16 @@ class QuestionModel(db.Model):
                                                QuestionTypeModel.questiontype_name).filter\
                 (QuestionTypeModel.questiontype_id == QuestionModel.questiontype_id).filter(QuestionModel.page_id==_page_id).\
                 filter(QuestionModel.question_status==True).order_by(QuestionModel.question_ordred.asc()).all()
+    @classmethod
+    def get_max_ordered(cls, page_id):
+        print page_id
+        return db.session.query(func.max(QuestionModel.question_ordred)).filter_by(page_id = page_id).scalar()
 
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+        nid = self.question_id
+        return nid
 
     def delete_from_db(self):
         db.session.delete(self)

@@ -12,7 +12,7 @@ from resources.folder import Folder, FolderList, FolderByName, FolderByUsername
 from resources.survey import Survey, SurveyByFolder, SurveyList, SurveyByUser, SurveyByName,SurveyMaxByUser
 from resources.page import Page, PageBySurvey, PageList
 from resources.questiontype import QuestionType, QuestionTypeList
-from resources.question import Question, QuestionByPage, QuestionList
+from resources.question import Question, QuestionByPage, QuestionList, QuestionOrder
 from resources.answerpaper import AnswerPaper, AnswerPaperBySurvey,AnswerPaperList
 from resources.choice import Choice, ChoiceByQuestion, ChoiceList
 from resources.answer import Answer, AnswerByPaper, AnswerByQuestion, AnswerList
@@ -62,6 +62,7 @@ api.add_resource(PageBySurvey, '/api/v1/page_survey', endpoint='page_survey')
 api.add_resource(Question, '/api/v1/question/<_id>', endpoint='question')
 api.add_resource(QuestionList, '/api/v1/questions', endpoint='questions')
 api.add_resource(QuestionByPage, '/api/v1/question_page', endpoint='question_page')
+api.add_resource(QuestionOrder, '/api/v1/get_order_question_page', endpoint='question_order')
 
 #answer paper
 api.add_resource(AnswerPaper, '/api/v1/answerpaper/<_id>', endpoint='answerpaper')
@@ -72,6 +73,7 @@ api.add_resource(AnswerPaperBySurvey, '/api/v1/answerpaper_survey', endpoint='an
 api.add_resource(Choice, '/api/v1/choice/<_id>', endpoint='choice')
 api.add_resource(ChoiceList, '/api/v1/choices', endpoint='choices')
 api.add_resource(ChoiceByQuestion, '/api/v1/choice_question', endpoint='choice_question')
+api.add_resource(ChoiceByQuestion, '/api/v1/delete_by_question', endpoint='delete_choice_question')
 
 #answer
 api.add_resource(Answer, '/api/v1/answer/<_id>', endpoint='answer')

@@ -67,3 +67,15 @@ class ChoiceByQuestion(Resource):
         if lstChoice:
             return {'Data': [choice.json() for choice in lstChoice], 'TotalRows': len(lstChoice), 'Status':1}
         return {'msg': 'Không có lựa chọn', 'Status': 0}
+
+    @jwt_required()
+    def delete(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('question_id', type=int, location='args', required=False)
+        args = parser.parse_args(strict=True)
+        question_id = args.get('question_id')
+        lstChoice = ChoiceModel.get_by_question(question_id)
+        if lstChoice:
+            for choice in lstChoice:
+                choice.delete_from_db()
+        return {'msg': 'Xoá lựa chọn thành công', 'Status': 1}

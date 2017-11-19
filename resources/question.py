@@ -4,6 +4,7 @@ from flask_jwt import jwt_required
 from models.question import QuestionModel
 from datetime import datetime
 from models.choice import ChoiceModel
+import json
 
 class Question(Resource):
     parser = reqparse.RequestParser()
@@ -57,11 +58,12 @@ class QuestionList(Resource):
     def post(self):
         data = Question.parser.parse_args()
         question = QuestionModel(**data)
+        print question.json()
         try:
-            question.save_to_db()
+            newid = question.save_to_db()
         except:
             return {'msg': 'Đã có lỗi xảy ra', 'Status': 0}
-        return {'msg': 'Thêm mới câu hỏi thành công thành công', 'Status': 1}
+        return {'msg': 'Thêm mới câu hỏi thành công thành công', 'Status': 1, 'insertedId': newid}
 
 class QuestionByPage(Resource):
 
@@ -75,13 +77,34 @@ class QuestionByPage(Resource):
         result = []
         if lstQuestion:
             for question in lstQuestion:
-                lstChoice = ChoiceModel.get_by_question(question.question_id)
+                lstChoice = []
+                print question.questiontype_code
+                if question.questiontype_code not in ['PR','DT','TM']:
+                    lstChoice = ChoiceModel.get_by_question(question.question_id)
+                    print len(lstChoice)
+                elif question.questiontype_code == 'SR':
+                    for c in lstChoice:
+                        c.choice_content = json.loads(str(c.choice_content))
+                else:
+                    lstChoice = []
                 result.append({'question_id': question.question_id, 'questiontype_id': question.questiontype_id,
-                'page_id': question.page_id, 'content': question.content, 'question_orderd': question.question_ordred,
-                'question_img': question.question_img, 'isrequired': question.is_required,
+                'page_id': question.page_id, 'content': question.content, 'question_ordered': question.question_ordred,
+                'question_img': question.question_img, 'is_required': question.is_required,
                 'status': question.question_status, 'last_edited': question.last_edited.isoformat(), 'questiontype_code': question.questiontype_code,
                 'questiontype_name': question.questiontype_name, 'choices' : [choice.json() for choice in lstChoice]})
             return {'Data': result, 'TotalRows': len(lstQuestion), 'Status': 1}
         return {'msg': 'Không tìm thấy câu hỏi', 'Status': 0}
 
+class QuestionOrder(Resource):
+    @jwt_required()
+    def get(self):
+        parser  = reqparse.RequestParser()
+        parser.add_argument('page_id', type=str, location='args', required=True)
+        args = parser.parse_args(strict=False)
+        page_id = args.get('page_id')
+        data = QuestionModel.get_max_ordered(page_id)
+        print data
+        if data:
+            return {'Data': data, 'Status': 1}
+        return {'msg': 'Có lỗi xảy ra ', 'Status': 0}
 

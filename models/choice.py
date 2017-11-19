@@ -25,7 +25,7 @@ class ChoiceModel(db.Model):
 
     def json(self):
         return {'choice_id' : self.choice_id, 'question_id': self.question_id, 'choice_ordered': self.choice_ordered,
-                'choice_value': self.choice_value, 'choice_content': self.choice_content, 'last_edited': self.last_edited.isoformat()}
+                 'choice_content': self.choice_content, 'last_edited': self.last_edited.isoformat()}
 
     @classmethod
     def get_by_id(cls, _id):
@@ -33,7 +33,7 @@ class ChoiceModel(db.Model):
 
     @classmethod
     def get_by_question(cls, _id):
-        return cls.query.filter_by(question_id=_id).order_by(ChoiceModel.choice_ordered).all()
+        return cls.query.filter_by(question_id=_id).order_by(ChoiceModel.choice_ordered).order_by(ChoiceModel.choice_ordered.asc()).all()
 
     def save_to_db(self):
         db.session.add(self)
