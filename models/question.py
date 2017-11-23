@@ -61,6 +61,10 @@ class QuestionModel(db.Model):
         print page_id
         return db.session.query(func.max(QuestionModel.question_ordred)).filter_by(page_id = page_id).scalar()
 
+    @classmethod
+    def get_question_from_to_position(cls, page_id, from_p, to_p):
+        return cls.query.filter_by(page_id = page_id).filter(QuestionModel.question_ordred >= from_p , QuestionModel.question_ordred <= to_p ).order_by(QuestionModel.question_ordred.asc()).all()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

@@ -46,7 +46,7 @@ class Question(Resource):
 
     @jwt_required()
     def delete(self, _id):
-        question = QuestionModel.get_by_id()
+        question = QuestionModel.get_by_id(_id)
 
         if question:
             question.delete_from_db()
@@ -106,5 +106,22 @@ class QuestionOrder(Resource):
         print data
         if data:
             return {'Data': data, 'Status': 1}
-        return {'msg': 'Có lỗi xảy ra ', 'Status': 0}
+        else:
+            return {'Data': 0, 'Status': 1}
+class QuestionByOrder(Resource):
+    @jwt_required()
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('page_id', type=str, location='args', required=True)
+        parser.add_argument('position_from', type=int, location='args', required=True)
+        parser.add_argument('position_to', type=int, location='args', required=True)
+        args = parser.parse_args(strict=False)
+        page_id = args.get('page_id')
+        position_from = args.get('position_from')
+        position_to = args.get('position_to')
+        data = QuestionModel.get_question_from_to_position(page_id,position_from,position_to)
+        if data:
+            return {'Data': [q.json() for q in data], 'TotalRows' : len(data),'Status' : 1}
+        return {'msg': 'Không có data', 'Status': 0}
+
 
