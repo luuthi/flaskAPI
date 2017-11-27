@@ -38,7 +38,7 @@ class Page(Resource):
 
     @jwt_required()
     def delete(self, _id):
-        page = PageModel.get_by_id()
+        page = PageModel.get_by_id(_id)
 
         if page:
             page.delete_from_db()
@@ -53,15 +53,14 @@ class PageList(Resource):
         data = Page.parser.parse_args()
         page = PageModel(**data)
         try:
-            page.save_to_db()
+            newid = page.save_to_db()
         except:
             return {'msg': 'Đã có lỗi xảy ra', 'Status': 0}
 
-        return {'msg': 'Thêm mới Page thành công', 'Status': 1}
+        return {'msg': 'Thêm mới Page thành công', 'Status': 1, 'insertedId': newid}
 
 class PageBySurvey(Resource):
 
-    @jwt_required()
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('survey_id', type=int, location='args')

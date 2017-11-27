@@ -33,7 +33,7 @@ class Question(Resource):
             question.page_id = data['page_id']
             question.questiontype_id =data['questiontype_id']
             question.content = data['content']
-            question.question_ordered = data['question_ordered']
+            question.question_ordred = int(data['question_ordered'])
             question.question_img = data['question_img']
             question.is_required = data['is_required']
             question.question_status = data['question_status']
@@ -67,7 +67,6 @@ class QuestionList(Resource):
 
 class QuestionByPage(Resource):
 
-    @jwt_required()
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('page_id', type=str, location='args', required=False)
@@ -92,8 +91,8 @@ class QuestionByPage(Resource):
                 'question_img': question.question_img, 'is_required': question.is_required,
                 'status': question.question_status, 'last_edited': question.last_edited.isoformat(), 'questiontype_code': question.questiontype_code,
                 'questiontype_name': question.questiontype_name, 'choices' : [choice.json() for choice in lstChoice]})
-            return {'Data': result, 'TotalRows': len(lstQuestion), 'Status': 1}
-        return {'msg': 'Không tìm thấy câu hỏi', 'Status': 0}
+            return {'Data': result, 'TotalRows': len(lstQuestion), 'Status': 1, 'Page_id' : page_id}
+        return {'msg': 'Không tìm thấy câu hỏi', 'Status': 0, 'Page_id' : page_id}
 
 class QuestionOrder(Resource):
     @jwt_required()

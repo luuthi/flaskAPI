@@ -39,7 +39,6 @@ class Survey(Resource):
                         required=True,
                         help="A folder must belong to a user")
 
-    @jwt_required()
     def get(self, _id):
         survey = SurveyModel.get_by_id(_id)
         if survey:
