@@ -11,14 +11,12 @@ class AnswerPaper(Resource):
     parser.add_argument('created_date', type=lambda x: datetime.strptime(x, '%Y-%m-%d'))
     parser.add_argument('status', type=bool)
 
-    @jwt_required()
     def get(self, _id):
         anwp = Model.get_by_id(_id)
         if anwp:
             return {'Data': anwp.json(), 'TotalRows': 1, 'Status':1}
         return {'msg': 'Không có bảng trả lời', 'Status':0}
 
-    @jwt_required()
     def put(self, _id):
         data = AnswerPaper.parser.parse_args()
         ansp = Model.get_by_id(_id)
@@ -31,7 +29,6 @@ class AnswerPaper(Resource):
             except:
                 return {'msg':'Đã có lỗi xảy ra', 'Status':0}
             return {'msg': 'Đã cập nhật thành công', 'Status':1}
-    @jwt_required()
     def delete(self, _id):
         ansp = Model.get_by_id(_id)
         if ansp:
@@ -39,16 +36,15 @@ class AnswerPaper(Resource):
         return {'msg': 'Thư mục đã xóa', 'Status': 1}
 
 class AnswerPaperList(Resource):
-    @jwt_required()
     def post(self):
         data = AnswerPaper.parser.parse_args()
         ansp = Model(**data)
         try:
-            ansp.save_to_db()
+            newid = ansp.save_to_db()
         except:
             return {'msg': 'Đã có lỗi xảy ra', 'Status': 0}
 
-        return {'msg': 'Thêm mới bảng trả lời thành công', 'Status': 1}
+        return {'msg': 'Thêm mới bảng trả lời thành công', 'Status': 1, 'insertedId': newid}
 class AnswerPaperBySurvey(Resource):
     @jwt_required()
     def get(self):
