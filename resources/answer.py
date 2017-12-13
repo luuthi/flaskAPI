@@ -58,9 +58,21 @@ class AnswerByQuestion(Resource):
         parser.add_argument('question_id', type=int, location='args', required=False)
         args = parser.parse_args(strict=True)
         question_id = args.get('question_id')
-        answer = AnswerModel.get_by_question(question_id)
-        if answer:
-            return {'Data': answer.json() , 'TotalRows': 1, 'Status': 1}
+        lstAnswer = AnswerModel.get_by_question(question_id)
+        if lstAnswer:
+            return {'Data': lstAnswer , 'TotalRows': len(lstAnswer), 'Status': 1}
+        return {'msg': 'Không có lựa chọn', 'Status': 0}
+
+class CountAnswerByQuestion(Resource):
+    @jwt_required()
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('question_id', type=int, location='args', required=False)
+        args = parser.parse_args(strict=True)
+        question_id = args.get('question_id')
+        lstAnswer = AnswerModel.get_count_answer_by_question(question_id)
+        if lstAnswer:
+            return {'Data': lstAnswer , 'TotalRows': len(lstAnswer), 'Status': 1}
         return {'msg': 'Không có lựa chọn', 'Status': 0}
 
 class AnswerByPaper(Resource):

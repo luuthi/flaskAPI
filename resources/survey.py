@@ -112,12 +112,13 @@ class SurveyByUser(Resource):
     def get(self):
         parser_user = reqparse.RequestParser()
         parser_user.add_argument('user_name', type=str, location='args', required=False)
+        parser_user.add_argument('status', type=int, location='args', required=False)
         args = parser_user.parse_args(strict=True)
         user_name = args.get('user_name')
-        print(user_name)
-        lstSurvey = SurveyModel.get_by_user(user_name)
+        status = args.get('status')
+        lstSurvey = SurveyModel.get_by_user(user_name, status)
         if lstSurvey:
-            return {'Data': [survey.json() for survey in lstSurvey], 'TotalRows': len(lstSurvey), 'Status': 1}
+            return {'Data': lstSurvey, 'TotalRows': len(lstSurvey), 'Status': 1}
         return {'msg': 'Người dùng không có survey ', 'Status': 0}
 
 

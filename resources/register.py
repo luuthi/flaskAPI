@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 
@@ -41,16 +42,19 @@ class UserRegister(Resource):
     )
 
     def post(self):
-        data = UserRegister.parser.parse_args()
+        data = UserRegister.parser.parse_args(strict=True)
         print(data)
         if UserModel.get_by_username(data['username']):
-            return {'msg': 'A user with this username already exist', 'status:': '0'}
+            return {'msg': 'Đã tồn tại tài khoản với username này', 'status:': '0'}
         if UserModel.get_by_email(data['email']):
-            return {'msg': 'A user with this email already exist', 'status': '0'}
+            return {'msg': 'Đã tồn tại tài khoản với email này', 'status': '0'}
 
         user = UserModel(**data)
-        print (user)
-        user.save_to_db()
-        return {'msg': 'User created successfully', 'status': '1'}, 201
+        newid = 0
+        try:
+            newid = user.save_to_db()
+        except:
+            return {'msg': 'Đã có lỗi xảy ra', 'Status': 0}
+        return {'msg': 'User created successfully', 'status': '1', 'insertedId': newid}, 201
 
 #

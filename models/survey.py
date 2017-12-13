@@ -1,5 +1,5 @@
 from db import db
-from sqlalchemy import func
+from sqlalchemy import func, text
 from models.folder import FolderModel
 
 
@@ -58,8 +58,28 @@ class SurveyModel(db.Model):
         return cls.query.filter_by(folder_code=_code).first()
 
     @classmethod
-    def get_by_user(cls, _user_name):
-        return cls.query.filter_by(user_name=_user_name).order_by(SurveyModel.created_date).all()
+    def get_by_user(cls, _user_name, status):
+        #get all
+        if status == 0:
+            sql = text("select * from survey where survey.user_name = '%s'" % _user_name)
+        #get active
+        elif status ==1 :
+            sql = text("select * from survey where survey.user_name = '%s' and end_date > strftime(date('now')) and start_date < strftime(date('now'))" % _user_name)
+        #get new
+        elif status == 2:
+            sql = text("select * from survey where survey.user_name = '%s' and  start_date > strftime(date('now'))" % _user_name)
+        #get inactive
+        elif status ==3:
+            sql = text("select * from survey where survey.user_name = '%s' and  end_date < strftime(date('now'))" % _user_name)
+        res = db.engine.execute(sql)
+        data = []
+        if res:
+            for r in res:
+                data.append({'survey_id': r.survey_id, 'survey_code': r.survey_code, 'survey_title': r.survey_title,
+                'survey_desc': r.survey_desc, 'survey_img': r.survey_img, 'start_date': r.start_date,
+                'end_date': r.end_date, 'created_date': r.created_date,
+                'last_edited': r.last_edited, 'folder_id': r.folder_id, 'user_name': r.user_name})
+        return data
 
     @classmethod
     def get_by_name(cls, _folder_name, _folder_id):
