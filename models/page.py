@@ -28,6 +28,7 @@ class PageModel(db.Model):
         return cls.query.filter_by(page_id=_id).first()
 
     def save_to_db(self):
+        print self.json()
         db.session.add(self)
         db.session.commit()
         nid = self.page_id

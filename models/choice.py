@@ -6,7 +6,6 @@ class ChoiceModel(db.Model):
     choice_id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer)
     choice_ordered = db.Column(db.Integer)
-    choice_value = db.Column(db.String(500))
     choice_content = db.Column(db.String(500))
     last_edited = db.Column(db.Date)
 
@@ -14,7 +13,6 @@ class ChoiceModel(db.Model):
         self.question_id = question_id
         self.choice_ordered = choice_ordered
         self.choice_content =choice_content
-        self.choice_value = choice_value
         self.last_edited = last_edited
 
     def date_handler(obj):

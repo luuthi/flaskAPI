@@ -7,7 +7,7 @@ class FolderModel(db.Model):
     __tablename__ = 'folder'
 
     folder_id = db.Column(db.Integer, primary_key=True)
-    folder_name = db.Column(db.String(100), unique=True)
+    folder_name = db.Column(db.String(100), unique=False)
     user_name = db.Column(db.String(100), db.ForeignKey('users.username'))
     user = db.relationship('UserModel')
     created_date = db.Column(db.Date, unique=False)

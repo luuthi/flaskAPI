@@ -58,8 +58,6 @@ class Survey(Resource):
             survey.last_edited = data['last_edited']
             survey.user_name = data['user_name']
             survey.folder_id = data['folder_id']
-            print (survey)
-            print (data)
             try:
                 survey.save_to_db()
             except:
@@ -131,8 +129,11 @@ class SurveyMaxByUser(Resource):
         user_name = args.get('user_name')
         print(user_name)
         max = SurveyModel.get_max(user_name)
+        print  max
         if max:
             return {'Data': max, 'Status': 1}
+        else:
+            return {'Data': 0, 'Status': 1}
         return {'msg': 'Có lỗi xảy ra ', 'Status': 0}
 
 class SurveyByName(Resource):

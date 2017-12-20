@@ -69,12 +69,7 @@ class FolderList(Resource):
     @jwt_required()
     def post(self):
         data = Folder.parser.parse_args()
-        if FolderModel.get_by_name(data['folder_name']):
-            return {'msg': 'Đã có thư mục trùng tên'}
-
         folder = FolderModel(**data)
-        print(data)
-        print(type(folder))
         try:
             folder.save_to_db()
         except:

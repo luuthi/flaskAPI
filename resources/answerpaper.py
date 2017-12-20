@@ -55,4 +55,6 @@ class AnswerPaperBySurvey(Resource):
         lstAnsp = Model.get_by_survey(survey_id)
         if lstAnsp:
             return {'Data': [ansp.json() for ansp in lstAnsp], 'TotalRows': len(lstAnsp), 'Status':1 }
+        else:
+            return {'Data': None, 'TotalRows': 0, 'Status': 1}
         return {'msg': 'Không có bảng trả lời', 'Status': 0}

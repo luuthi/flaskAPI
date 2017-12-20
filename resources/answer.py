@@ -41,7 +41,6 @@ class Answer(Resource):
         return {'msg': 'Xóa thành công câu trả lời', 'Status': 0}
 
 class AnswerList(Resource):
-    @jwt_required()
     def post(self):
         data = Answer.parser.parse_args()
         answer = AnswerModel(**data)

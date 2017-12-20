@@ -43,14 +43,12 @@ class UserRegister(Resource):
 
     def post(self):
         data = UserRegister.parser.parse_args(strict=True)
-        print(data)
         if UserModel.get_by_username(data['username']):
             return {'msg': 'Đã tồn tại tài khoản với username này', 'status:': '0'}
         if UserModel.get_by_email(data['email']):
             return {'msg': 'Đã tồn tại tài khoản với email này', 'status': '0'}
 
         user = UserModel(**data)
-        newid = 0
         try:
             newid = user.save_to_db()
         except:

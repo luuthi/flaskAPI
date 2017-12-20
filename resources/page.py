@@ -59,6 +59,7 @@ class PageList(Resource):
 
         return {'msg': 'Thêm mới Page thành công', 'Status': 1, 'insertedId': newid}
 
+
 class PageBySurvey(Resource):
 
     def get(self):
@@ -70,3 +71,5 @@ class PageBySurvey(Resource):
         if lstPage:
             return {'Data': [page.json() for page in lstPage], 'TotalRows': len(lstPage), 'Status': 1}
         return {'msg': 'Survey không cáo page', 'Status': 0}
+
+

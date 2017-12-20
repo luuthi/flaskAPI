@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 
 from security import authenticate, identity
 from resources.register import UserRegister
-from resources.user import User,UserByName
+from resources.user import User,UserByName,UserPassword
 from resources.folder import Folder, FolderList, FolderByName, FolderByUsername
 from resources.survey import Survey, SurveyByFolder, SurveyList, SurveyByUser, SurveyByName,SurveyMaxByUser
 from resources.page import Page, PageBySurvey, PageList
@@ -20,7 +20,7 @@ from resources.answerpaper import AnswerPaper, AnswerPaperBySurvey,AnswerPaperLi
 from resources.choice import Choice, ChoiceByQuestion, ChoiceList
 from resources.answer import Answer, AnswerByPaper, AnswerByQuestion, AnswerList, CountAnswerByQuestion
 
-UPLOAD_FOLDER = 'D:\Flask-API\upload\image'
+UPLOAD_FOLDER = 'D:\Flask-API\upload'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -38,9 +38,10 @@ jwt = JWT(app, authenticate, identity) #/auth
 
 #add resources
 #register, user
-api.add_resource(UserRegister, '/api/v1/ register', endpoint='register')
+api.add_resource(UserRegister, '/api/v1/register', endpoint='register')
 api.add_resource(UserByName, '/api/v1/user_by_name/<string:username>', endpoint='user_by_name')
 api.add_resource(User,'/api/v1/user/<string:_id>', endpoint='user')
+api.add_resource(UserPassword, '/api/v1/user_pass/<string:username>', endpoint='user_pass')
 
 #folder
 api.add_resource(Folder, '/api/v1/folder/<_id>', endpoint='folder')
@@ -95,26 +96,57 @@ api.add_resource(AnswerByPaper, '/api/v1/answer_paper', endpoint='answer_paper')
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-@app.route('/api/v1/image-upload', methods=['POST','GET'])
-def upload_file():
+@app.route('/api/v1/avatar-upload', methods=['POST','GET'])
+def upload_avatar():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'files' not in request.files:
             return  {'msg' : 'Not found file', 'Status': 0}
         file = request.files['files']
+        username = request.form['username']
         # if user does not select file, browser also
         # submit a empty part without filename
         if file.filename == '':
             return {'msg': 'Not found file', 'Status': 0}
         if file :
             if allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                print os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                data = {'Data': os.path.join(app.config['UPLOAD_FOLDER'], filename), 'Status' : 1}
+                folder = app.config['UPLOAD_FOLDER'] + '\\avatar'
+                filename = username + os.path.splitext(file.filename)[1]
+                file.save(os.path.join(folder, filename))
+                data = {'Data':  filename, 'Status' : 1}
                 return json.dumps(data)
             else:
                 return {'msg': 'File denied!', 'Status': 0}
+
+@app.route('/avatar/<path:path>')
+def get_avatar(path):
+    return send_from_directory('upload/avatar', path)
+
+@app.route('/api/v1/survey-image', methods=['POST','GET'])
+def upload_avatar():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'files' not in request.files:
+            return  {'msg' : 'Not found file', 'Status': 0}
+        file = request.files['files']
+        surveyname = request.form['surveyname']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            return {'msg': 'Not found file', 'Status': 0}
+        if file :
+            if allowed_file(file.filename):
+                folder = app.config['UPLOAD_FOLDER'] + '\\image'
+                surveyname = surveyname + os.path.splitext(file.filename)[1]
+                file.save(os.path.join(folder, surveyname))
+                data = {'Data':  surveyname, 'Status' : 1}
+                return json.dumps(data)
+            else:
+                return {'msg': 'File denied!', 'Status': 0}
+@app.route('/image/<path:path>')
+def get_avatar(path):
+    return send_from_directory('upload/image', path)
+
 if __name__ == '__main__':
     from db import db
     db.init_app(app)

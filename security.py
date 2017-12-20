@@ -4,8 +4,8 @@ from werkzeug.security import safe_str_cmp
 
 def authenticate(username,password):
     user = UserModel.get_by_username(username)
-    # if user:
-    #     user =UserModel.get_by_email(username)
+    print (user.password)
+    print (password)
     if user and safe_str_cmp(user.password, password) and (user.user_status == True):
         return user
 

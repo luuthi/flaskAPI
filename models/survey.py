@@ -64,7 +64,7 @@ class SurveyModel(db.Model):
             sql = text("select * from survey where survey.user_name = '%s'" % _user_name)
         #get active
         elif status ==1 :
-            sql = text("select * from survey where survey.user_name = '%s' and end_date > strftime(date('now')) and start_date < strftime(date('now'))" % _user_name)
+            sql = text("select * from survey where survey.user_name = '%s' and end_date >= strftime(date('now')) and start_date <= strftime(date('now'))" % _user_name)
         #get new
         elif status == 2:
             sql = text("select * from survey where survey.user_name = '%s' and  start_date > strftime(date('now'))" % _user_name)
