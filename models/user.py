@@ -32,6 +32,13 @@ class UserModel(db.Model):
         return cls.query.filter_by(username=username).first()
 
     @classmethod
+    def get_password(cls, username):
+        rs = cls.query.filter_by(username = username).first()
+        if rs:
+            return rs.password
+        else:
+            return None
+    @classmethod
     def get_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
     
@@ -42,4 +49,6 @@ class UserModel(db.Model):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+        nid = self.id
+        return nid
   

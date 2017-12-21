@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from flask_restful import Resource, Api, reqparse
 from flask_jwt import jwt_required
 from models.user import UserModel
@@ -12,11 +13,10 @@ class User(Resource):
     )
     parser.add_argument('password',
         type=str,
-        required=True,
-        help="This field cannot be blank."
+        required=False
     )
     parser.add_argument('fullname',
-        type= str,
+        type= unicode,
         required = True,
         help = "This field cannot be blank"
     )
@@ -33,7 +33,7 @@ class User(Resource):
     parser.add_argument('user_type',
         type = bool,
         required = True,
-        help = "This filed cannot be blank"
+        help = "This field cannot be blank"
     )
     parser.add_argument('user_status',
         type = bool,
@@ -45,54 +45,56 @@ class User(Resource):
     def get(self, _id):
         user = UserModel.get_by_id(_id)
         if user:
-            return user.json(), 200
+            return {'Data': user.json(), 'Status': 1}, 200
         else:
-            return {'msg', 'User not found'}
+            return {'msg': 'User not found', 'Status': 0}
+
 
     @jwt_required()
+    def put(self, _id):
+        data = User.parser.parse_args()
+        update_user = UserModel.get_by_id(_id)
+        if update_user:
+            update_user.fullname = data['fullname']
+            update_user.image = data['image']
+            try :
+                update_user.save_to_db()
+                return {'msg': 'User updated successfully', 'Status': 1}
+            except:
+                return {'msg': 'Đã có lỗi xảy ra', 'Status': 0}
+        else:
+            return {'msg': 'User with name {} not exists'.format(data['username'])}, 404
+
+class UserByName(Resource):
     def get(self, username):
         user = UserModel.get_by_username(username)
         if user:
-            return user.json(), 200
+            return { 'Data': user.json(), 'Status' :1}, 200
         else:
-            return {'msg', 'User not found'}
+            return {'msg': 'User not found', 'Status': 0}
 
-    # def post(self):
-    #     data = UserRegister.parser.parse_args()
-    #     print(data)
-    #     if UserModel.get_by_username(data['username']):
-    #         return {'msg': 'A user with this username already exist'}, 400
-    #     if UserModel.get_by_email(data['email']):
-    #         return {'msg': 'A user with this email already exist'}, 400
-    #
-    #     user = UserModel(**data)
-    #     user.save_to_db()
-    #     return {'msg': 'User created successfully'}, 201
+class UserPassword(Resource):
+    @jwt_required()
+    def get(self,username):
+        password = UserModel.get_password(username)
+        if password:
+            return {'Data' : password, 'Status': 1}
+        else:
+            return {'msg': 'User not found', 'Status': 0}
 
-#     @jwt_required()
-#     def put(self, _id):
-#         data = UserRegister.parser.parse_args()
-#         update_user = UserModel.get_by_id(_id)
-#         if update_user:
-#             update_user.full_name = data['full_name']
-#             update_user.image = data['image']
-#
-#             update_user.save_to_db()
-#             return {'msg': 'User updated successfully'}
-#         else:
-#             return {'msg': 'User with name {} not exists'.format(data['username'])}, 404
-#
-#     @jwt_required()
-#     def delete(self,_id):
-#         delete_user = UserModel.get_by_id(_id)
-#         if delete_user:
-#             delete_user.delete_from_db()
-#         else:
-#             return {'msg': 'User not found'}, 404
-#         return {'msg': 'User deleted'}
-#
-#
-# class UserList(Resource):
-#     @jwt_required()
-#     def get(self):
-#         return {'users': [user.json() for user in UserModel.query.all().order_by(UserModel.user_id)]}, 200
+    @jwt_required()
+    def put(self, username):
+        parser1 = reqparse.RequestParser()
+        parser1.add_argument('password',type=str,required=True)
+        args = parser1.parse_args(strict=True)
+        password = args.get('password')
+        update_user = UserModel.get_by_username(username)
+        if update_user:
+            update_user.password = password
+            try:
+                update_user.save_to_db()
+                return {'msg': 'User updated successfully', 'Status': 1}
+            except:
+                return {'msg': 'Đã có lỗi xảy ra', 'Status': 0}
+        else:
+            return {'msg': 'User not exists'}, 404
