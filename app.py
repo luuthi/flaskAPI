@@ -122,8 +122,8 @@ def upload_avatar():
 def get_avatar(path):
     return send_from_directory('upload/avatar', path)
 
-@app.route('/api/v1/survey-image', methods=['POST','GET'])
-def upload_avatar():
+@app.route('/api/v1/surveyimg-upload', methods=['POST','GET'])
+def upload_image():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'files' not in request.files:
@@ -144,7 +144,7 @@ def upload_avatar():
             else:
                 return {'msg': 'File denied!', 'Status': 0}
 @app.route('/image/<path:path>')
-def get_avatar(path):
+def get_image(path):
     return send_from_directory('upload/image', path)
 
 if __name__ == '__main__':
